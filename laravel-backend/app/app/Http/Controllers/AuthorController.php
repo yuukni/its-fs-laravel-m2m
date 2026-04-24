@@ -12,7 +12,7 @@ class AuthorController extends Controller
      */
     public function index()
     {
-        //
+        return Author::all();
     }
 
     /**
@@ -20,7 +20,14 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = request()->validate([
+            'name' => ['required', 'string'],
+            'surname' => ['required', 'string'],
+            'bio' => ['nullable', 'text'],
+        ]);
+
+        $author = Author::create($validated);
+        return response()->json($author, 201);
     }
 
     /**
@@ -28,7 +35,7 @@ class AuthorController extends Controller
      */
     public function show(Author $author)
     {
-        //
+        return $author->load('mangas');
     }
 
     /**
@@ -36,7 +43,15 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
-        //
+        $validated = request()->validate([
+            'name' => ['sometimes', 'string'],
+            'surname' => ['sometimes', 'string'],
+            'bio' => ['nullable', 'text'],
+        ]);
+
+        $author->update($validated);
+
+        return $author->load('mangas');
     }
 
     /**
@@ -44,6 +59,8 @@ class AuthorController extends Controller
      */
     public function destroy(Author $author)
     {
-        //
+        $author->delete();
+
+        return response()->json(null, 204);
     }
 }

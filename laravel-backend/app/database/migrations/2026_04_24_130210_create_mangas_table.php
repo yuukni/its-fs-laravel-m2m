@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('mangas', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('title')->unique();
             $table->text('description')->nullable();
+            $table->foreignId('author_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->foreignId('genre_id')->constrained()->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });

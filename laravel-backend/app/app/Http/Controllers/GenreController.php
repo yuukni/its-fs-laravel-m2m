@@ -12,7 +12,7 @@ class GenreController extends Controller
      */
     public function index()
     {
-        //
+        return Genre::all();
     }
 
     /**
@@ -20,7 +20,13 @@ class GenreController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = request()->validate([
+            'name' => ['sometimes', 'string'],
+            'description' => ['nullable', 'text'],
+        ]);
+
+        $genre = Genre::create($validated);
+        return response()->json($genre, 201);
     }
 
     /**
@@ -28,7 +34,7 @@ class GenreController extends Controller
      */
     public function show(Genre $genre)
     {
-        //
+        return $genre->load('mangas');
     }
 
     /**
@@ -36,7 +42,14 @@ class GenreController extends Controller
      */
     public function update(Request $request, Genre $genre)
     {
-        //
+        $validated = request()->validate([
+            'name' => ['sometimes', 'string'],
+            'description' => ['nullable', 'text'],
+        ]);
+
+        $genre->update($validated);
+
+        return $genre->load('mangas');
     }
 
     /**
@@ -44,6 +57,8 @@ class GenreController extends Controller
      */
     public function destroy(Genre $genre)
     {
-        //
+        $genre->delete();
+
+        return response()->json(null, 204);
     }
 }
