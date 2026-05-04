@@ -12,18 +12,15 @@ class Manga extends Model
     protected $fillable = [
         'title',
         'description',
-        'author_id',
-        'genre_id',
-
     ];
 
     public function authors()
     {
-        return $this->belongsTo(Author::class);
+        return $this->belongsToMany(Author::class);
     }
 
-    public function genre()
+    public function genres()
     {
-        return $this->belongsTo(Genre::class);
+        return $this->belongsToMany(Genre::class);
     }
 }

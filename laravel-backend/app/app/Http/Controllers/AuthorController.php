@@ -20,10 +20,10 @@ class AuthorController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = request()->validate([
-            'name' => ['required', 'string'],
-            'surname' => ['required', 'string'],
-            'bio' => ['nullable', 'text'],
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'surname' => ['required', 'string', 'max:255'],
+            'bio' => ['nullable', 'string'],
         ]);
 
         $author = Author::create($validated);
@@ -43,10 +43,10 @@ class AuthorController extends Controller
      */
     public function update(Request $request, Author $author)
     {
-        $validated = request()->validate([
-            'name' => ['sometimes', 'string'],
-            'surname' => ['sometimes', 'string'],
-            'bio' => ['nullable', 'text'],
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'surname' => ['sometimes', 'string', 'max:255'],
+            'bio' => ['nullable', 'string'],
         ]);
 
         $author->update($validated);

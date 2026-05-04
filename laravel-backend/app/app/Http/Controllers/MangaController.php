@@ -13,7 +13,7 @@ class MangaController extends Controller
      */
     public function index()
     {
-        return Manga::all();
+        return Manga::with(['authors', 'genres'])->get();
     }
 
     /**
@@ -21,15 +21,25 @@ class MangaController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = request()->validate([
-            'title' => ['required', 'string', 'unique:mangas,title'],
-            'description' => ['nullable', 'text'],
-            'author_id' => ['required', 'exists:authors,id'],
-            'genre_id' => ['required', 'exists:genres,id'],
+        $validated = $request->validate([
+            'title' => ['required', 'string', 'max:255', 'unique:mangas,title'],
+            'description' => ['nullable', 'string'],
+            'author_ids' => ['required', 'array'],
+            'author_ids.*' => ['exists:authors,id'],
+            'genre_ids' => ['required', 'array'],
+            'genre_ids.*' => ['exists:genres,id'],
         ]);
 
-        $manga = Manga::create($validated);
-        return response()->json($manga, 201);
+        $manga = Manga::create([
+            'title' => $validated['title'],
+            'description' => $validated['description'] ?? null,
+        ]);
+        $manga->authors()->sync($validated['author_ids']);
+        $manga->genres()->sync($validated['genre_ids']);
+        return response()->json(
+            $manga->load(['authors', 'genres']),
+            201
+        );
     }
 
     /**
@@ -37,7 +47,7 @@ class MangaController extends Controller
      */
     public function show(Manga $manga)
     {
-        return $manga->load(['author', 'genres']);
+        return $manga->load(['authors', 'genres']);
     }
 
     /**
@@ -45,16 +55,28 @@ class MangaController extends Controller
      */
     public function update(Request $request, Manga $manga)
     {
-        $validated = request()->validate([
-            'title' => ['sometimes', 'required', 'string', Rule::unique('mangas', 'title')->ignore($manga->id)],
-            'description' => ['nullable', 'text'],
-            'author_id' => ['sometimes', 'required', 'exists:authors,id'],
-            'genre_id' => ['sometimes', 'required', 'exists:genres,id'],
+        $validated = $request->validate([
+            'title' => ['sometimes', 'required', 'string', 'max:255', Rule::unique('mangas', 'title')->ignore($manga->id)],
+            'description' => ['nullable', 'string'],
+            'author_ids' => ['sometimes', 'array'],
+            'author_ids.*' => ['exists:authors,id'],
+            'genre_ids' => ['sometimes', 'array'],
+            'genre_ids.*' => ['exists:genres,id'],
         ]);
 
-        $manga->update($validated);
+        $manga->update([
+            'title' => $validated['title'] ?? $manga->title,
+            'description' => $validated['description'] ?? $manga->description,
+        ]);
+        if (isset($validated['author_ids'])) {
+            $manga->authors()->sync($validated['author_ids']);
+        }
 
-        return $manga->load(['author', 'genres']);
+        if (isset($validated['genre_ids'])) {
+            $manga->genres()->sync($validated['genre_ids']);
+        }
+
+        return $manga->load(['authors', 'genres']);
     }
 
     /**

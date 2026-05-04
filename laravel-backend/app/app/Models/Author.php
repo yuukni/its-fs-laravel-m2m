@@ -17,6 +17,6 @@ class Author extends Model
 
     public function mangas()
     {
-        return $this->hasMany(Manga::class);
+        return $this->belongsToMany(Manga::class);
     }
 }

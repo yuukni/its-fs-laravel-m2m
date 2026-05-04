@@ -20,9 +20,9 @@ class GenreController extends Controller
      */
     public function store(Request $request)
     {
-        $validated = request()->validate([
-            'name' => ['sometimes', 'string'],
-            'description' => ['nullable', 'text'],
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
         ]);
 
         $genre = Genre::create($validated);
@@ -42,9 +42,9 @@ class GenreController extends Controller
      */
     public function update(Request $request, Genre $genre)
     {
-        $validated = request()->validate([
-            'name' => ['sometimes', 'string'],
-            'description' => ['nullable', 'text'],
+        $validated = $request->validate([
+            'name' => ['sometimes', 'string', 'max:255'],
+            'description' => ['nullable', 'string'],
         ]);
 
         $genre->update($validated);

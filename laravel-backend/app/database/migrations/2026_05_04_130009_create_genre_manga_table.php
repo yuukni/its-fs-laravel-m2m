@@ -11,10 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('mangas', function (Blueprint $table) {
+        Schema::create('genre_manga', function (Blueprint $table) {
             $table->id();
-            $table->string('title')->unique();
-            $table->text('description')->nullable();
+
+            $table->foreignId('genre_id')->constrained()->onDelete('cascade');
+            $table->foreignId('manga_id')->constrained()->onDelete('cascade');
+
             $table->timestamps();
         });
     }
@@ -24,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('mangas');
+        Schema::dropIfExists('genre_manga');
     }
 };
