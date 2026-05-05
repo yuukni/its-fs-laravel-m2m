@@ -18,5 +18,7 @@ Route::get('mangas/{manga}/authors', [MangaController::class, 'authors']);
 Route::get('mangas/{manga}/genres', [MangaController::class, 'genres']);
 Route::post('mangas/{manga}/authors', [MangaController::class, 'attachAuthor']);
 Route::post('mangas/{manga}/genres', [MangaController::class, 'attachGenre']);
+Route::put('mangas/{manga}/authors/{author}', [MangaController::class, 'syncAuthor']);
+Route::put('mangas/{manga}/genres/{genre}', [MangaController::class, 'syncGenre']);
 Route::delete('mangas/{manga}/authors/{author}', [MangaController::class, 'detachAuthor']);
 Route::delete('mangas/{manga}/genres/{genre}', [MangaController::class, 'detachGenre']);
