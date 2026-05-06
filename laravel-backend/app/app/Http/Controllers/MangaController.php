@@ -28,11 +28,17 @@ class MangaController extends Controller
             'author_ids.*' => ['exists:authors,id'],
             'genre_ids' => ['required', 'array'],
             'genre_ids.*' => ['exists:genres,id'],
+            'year' => ['nullable', 'integer', 'min:1900', 'max:' . date('Y')],
+            'volumes' => ['nullable', 'integer', 'min:1'],
+            'chapters' => ['nullable', 'integer', 'min:1'],
         ]);
 
         $manga = Manga::create([
             'title' => $validated['title'],
             'description' => $validated['description'] ?? null,
+            'year' => $validated['year'] ?? null,
+            'volumes' => $validated['volumes'] ?? null,
+            'chapters' => $validated['chapters'] ?? null,
         ]);
         $manga->authors()->sync($validated['author_ids']);
         $manga->genres()->sync($validated['genre_ids']);
@@ -62,11 +68,17 @@ class MangaController extends Controller
             'author_ids.*' => ['exists:authors,id'],
             'genre_ids' => ['sometimes', 'array'],
             'genre_ids.*' => ['exists:genres,id'],
+            'year' => ['sometimes', 'integer', 'min:1900', 'max:' . date('Y')],
+            'volumes' => ['sometimes', 'integer', 'min:1'],
+            'chapters' => ['sometimes', 'integer', 'min:1'],
         ]);
 
         $manga->update([
             'title' => $validated['title'] ?? $manga->title,
             'description' => $validated['description'] ?? $manga->description,
+            'year' => $validated['year'] ?? $manga->year,
+            'volumes' => $validated['volumes'] ?? $manga->volumes,
+            'chapters' => $validated['chapters'] ?? $manga->chapters,
         ]);
         if (isset($validated['author_ids'])) {
             $manga->authors()->sync($validated['author_ids']);

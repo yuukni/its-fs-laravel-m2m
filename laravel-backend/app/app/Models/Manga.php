@@ -12,6 +12,9 @@ class Manga extends Model
     protected $fillable = [
         'title',
         'description',
+        'year',
+        'volumes',
+        'chapters',
     ];
 
     public function authors()
